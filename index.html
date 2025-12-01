@@ -4,7 +4,10 @@
   <meta charset="UTF-8" />
   <title>XSEN Player</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="XSEN Universal Player – a clean, bot-safe highlight player for all XSEN-powered sports bots." />
+  <meta
+    name="description"
+    content="XSEN Universal Player – a clean, bot-safe highlight player for all XSEN-powered sports bots."
+  />
 
   <style>
     /* ===== RESET / BASE ===== */
@@ -175,8 +178,7 @@
       <div class="xsen-message">
         <div class="xsen-message-title">Waiting for a highlight…</div>
         <div class="xsen-message-body">
-          No video was provided.  
-          Use <code>?v=YOUTUBE_ID</code> in the URL.
+          No video was provided. Use <code>?v=YOUTUBE_ID</code> in the URL.
         </div>
       </div>
     </main>
@@ -195,7 +197,7 @@
       const main = document.getElementById("xsen-main");
       const videoId = rawId && rawId.trim();
 
-      // Validate ID (simple + safe)
+      // Simple safe validation for a YouTube-style ID
       const isValid =
         videoId &&
         videoId.length >= 6 &&
@@ -206,7 +208,7 @@
           <div class="xsen-message">
             <div class="xsen-message-title">Video player configuration error</div>
             <div class="xsen-message-body">
-              Invalid or missing video ID.  
+              Invalid or missing video ID.<br />
               Use <code>?v=YOUTUBE_ID</code>.
             </div>
           </div>
@@ -214,7 +216,10 @@
         return;
       }
 
-      const embedUrl = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&mute=1&rel=0&modestbranding=1`;
+      const embedUrl =
+        "https://www.youtube.com/embed/" +
+        encodeURIComponent(videoId) +
+        "?autoplay=1&mute=1&rel=0&modestbranding=1";
 
       main.innerHTML = `
         <div class="xsen-video-wrapper">
