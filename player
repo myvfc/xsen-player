@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>XSEN Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="XSEN Universal Player – a clean, bot-safe highlight player for all XSEN-powered sports bots." />
+
+  <style>
+    /* ===== RESET / BASE ===== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 45%, #000 100%);
+      color: #e5e7eb;
+    }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+
+    /* ===== SHELL ===== */
+    .xsen-shell {
+      width: 100%;
+      max-width: 960px;
+      border-radius: 18px;
+      background: rgba(15, 23, 42, 0.9);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(148, 163, 184, 0.25);
+      backdrop-filter: blur(14px);
+    }
+
+    /* ===== HEADER ===== */
+    .xsen-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 6px 0 6px;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .xsen-badge {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      padding: 4px 10px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #4b5563, #111827);
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    .xsen-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25);
+      display: inline-block;
+      margin-left: 10px;
+    }
+
+    /* ===== VIDEO WRAPPER ===== */
+    .xsen-video-wrapper {
+      position: relative;
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #020617;
+      padding-top: 56.25%; /* 16:9 ratio */
+    }
+
+    .xsen-video-wrapper iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ===== WATERMARK ===== */
+    .xsen-watermark {
+      position: absolute;
+      right: 12px;
+      bottom: 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.65;
+      color: #f8fafc;
+      text-shadow:
+        0 0 4px rgba(0, 0, 0, 0.7),
+        0 0 10px rgba(0, 0, 0, 0.7);
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* ===== FOOTER ===== */
+    .xsen-footer {
+      padding: 0 6px 2px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      color: #9ca3af;
+      opacity: 0.9;
+    }
+
+    /* ===== MESSAGE STATE ===== */
+    .xsen-message {
+      width: 100%;
+      min-height: 180px;
+      border-radius: 14px;
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+      background: radial-gradient(circle at top, #111827 0, #020617 60%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .xsen-message-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    .xsen-message-body {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      max-width: 280px;
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 10px; }
+      .xsen-shell { padding: 10px; border-radius: 14px; }
+      .xsen-video-wrapper { border-radius: 12px; }
+      .xsen-watermark {
+        font-size: 0.65rem;
+        right: 8px;
+        bottom: 6px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="xsen-shell">
+    <header class="xsen-header">
+      <div>
+        <span class="xsen-badge">XSEN • PLAYER</span>
+        <span class="xsen-dot"></span>
+      </div>
+      <div>player.xsen.fun</div>
+    </header>
+
+    <main id="xsen-main">
+      <!-- Replaced dynamically by JS -->
+      <div class="xsen-message">
+        <div class="xsen-message-title">Waiting for a highlight…</div>
+        <div class="xsen-message-body">
+          No video was provided.  
+          Use <code>?v=YOUTUBE_ID</code> in the URL.
+        </div>
+      </div>
+    </main>
+
+    <footer class="xsen-footer">
+      <span>Powered by XSEN</span>
+      <span>XSEN.fun</span>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const rawId = params.get("v") || params.get("video") || params.get("id");
+
+      const main = document.getElementById("xsen-main");
+      const videoId = rawId && rawId.trim();
+
+      // Validate ID (simple + safe)
+      const isValid =
+        videoId &&
+        videoId.length >= 6 &&
+        /^[A-Za-z0-9_-]+$/.test(videoId);
+
+      if (!isValid) {
+        main.innerHTML = `
+          <div class="xsen-message">
+            <div class="xsen-message-title">Video player configuration error</div>
+            <div class="xsen-message-body">
+              Invalid or missing video ID.  
+              Use <code>?v=YOUTUBE_ID</code>.
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const embedUrl = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&mute=1&rel=0&modestbranding=1`;
+
+      main.innerHTML = `
+        <div class="xsen-video-wrapper">
+          <iframe
+            src="${embedUrl}"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+          <div class="xsen-watermark">XSEN</div>
+        </div>
+      `;
+    })();
+  </script>
+</body>
+</html>
