@@ -190,48 +190,49 @@
   </div>
 
   <script>
-    (function () {
-      const params = new URLSearchParams(window.location.search);
-      const rawId = params.get("v") || params.get("video") || params.get("id");
+   (function () {
+  const params = new URLSearchParams(window.location.search);
+  const rawId = params.get("v") || params.get("video") || params.get("id");
 
-      const main = document.getElementById("xsen-main");
-      const videoId = rawId && rawId.trim();
+  const main = document.getElementById("xsen-main");
+  const videoId = rawId && rawId.trim();
 
-      // Simple safe validation for a YouTube-style ID
-      const isValid =
-        videoId &&
-        videoId.length >= 6 &&
-        /^[A-Za-z0-9_-]+$/.test(videoId);
+  const isValid =
+    videoId &&
+    videoId.length >= 6 &&
+    /^[A-Za-z0-9_-]+$/.test(videoId);
 
-      if (!isValid) {
-        main.innerHTML = `
-          <div class="xsen-message">
-            <div class="xsen-message-title">Video player configuration error</div>
-            <div class="xsen-message-body">
-              Invalid or missing video ID.<br />
-              Use <code>?v=YOUTUBE_ID</code>.
-            </div>
-          </div>
-        `;
-        return;
-      }
-
-      const embedUrl =
-        "https://www.youtube.com/embed/" +
-        encodeURIComponent(videoId) +
-        "?autoplay=1&mute=1&rel=0&modestbranding=1";
-
-      main.innerHTML = `
-        <div class="xsen-video-wrapper">
-          <iframe
-            src="${embedUrl}"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen
-          ></iframe>
-          <div class="xsen-watermark">XSEN</div>
+  if (!isValid) {
+    main.innerHTML = `
+      <div class="xsen-message">
+        <div class="xsen-message-title">Video player configuration error</div>
+        <div class="xsen-message-body">
+          Invalid or missing video ID.<br />
+          Use <code>?v=YOUTUBE_ID</code>.
         </div>
-      `;
-    })();
+      </div>
+    `;
+    return;
+  }
+
+  // NO AUTOPLAY -- allow YouTube to show thumbnail + play button
+  const embedUrl =
+    "https://www.youtube.com/embed/" +
+    encodeURIComponent(videoId) +
+    "?rel=0&modestbranding=1";
+
+  main.innerHTML = `
+    <div class="xsen-video-wrapper">
+      <iframe
+        src="${embedUrl}"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+      <div class="xsen-watermark">XSEN</div>
+    </div>
+  `;
+})();
+
   </script>
 </body>
 </html>
